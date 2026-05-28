@@ -12,19 +12,21 @@ Versjon: 3.6.0
 
 ## Kom i gang
 
-**Forutsetning:** [Claude Code](https://docs.claude.com/claude-code) må være installert.
+**Forutsetning:** [Claude Code](https://docs.claude.com/claude-code) må være installert (CLI-kommandoen heter `claude`). Monitor-dashboardet trenger i tillegg Node.js 18+. Har du ikke Claude Code? Følg installasjonsguiden på lenken over først.
 
-Kjør installeren — den henter Kit CC og legger alt på plass (også skjulte filer), så du slipper å flytte filer manuelt:
+Kjør installeren — den henter Kit CC og legger alt på plass (også skjulte filer), så du slipper å flytte filer manuelt. Last ned scriptet og kjør det (virker i alle skall; inspiser gjerne `install.sh` før du kjører):
 
 **Ny app** (installeren oppretter mappa for deg):
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh) min-nye-app
+curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh -o kitcc-install.sh
+bash kitcc-install.sh min-nye-app
 ```
 
 **App du har fra før** (stå i prosjektmappa di — Kit CC legges inn ved siden av koden din):
 ```bash
 cd min-eksisterende-app
-bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh)
+curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh -o kitcc-install.sh
+bash kitcc-install.sh
 ```
 
 Deretter:
@@ -89,7 +91,7 @@ Kit CC/
 ├── hooks-library/   ← Claude Code-hooks (sikkerhet)
 └── templates/       ← disaster-runbooks, hendelses-maler, pgTAP-tester
 kit-cc-overlay/      ← Kit CC Monitor (dashboard)
-.ai/                 ← prosjekt-state (opprettes automatisk når du bygger)
+.ai/                 ← prosjekt-state (mappa finnes; state-filene fylles ut når du bygger)
 ```
 
 ---

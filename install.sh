@@ -11,6 +11,9 @@
 #   Eksisterende app (stå i den):  cd min-app && bash install.sh
 #   Her (gjeldende mappe):         bash install.sh .
 #
+
+# Kjør alltid i bash — re-exec hvis scriptet ble startet med sh/dash
+[ -n "${BASH_VERSION:-}" ] || exec bash "$0" "$@"
 set -euo pipefail
 
 REPO_TARBALL="https://github.com/oyvinddaniel/kit-cc-norwegian/archive/refs/heads/main.tar.gz"
@@ -40,7 +43,7 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 echo "Henter Kit CC..."
 curl -fsSL "$REPO_TARBALL" -o "$TMP/kitcc.tar.gz" || { echo "Kunne ikke laste ned Kit CC (sjekk internett)."; exit 1; }
-tar -xzf "$TMP/kitcc.tar.gz" -C "$TMP"
+tar -xzf "$TMP/kitcc.tar.gz" -C "$TMP" || { echo "Kunne ikke pakke ut Kit CC (korrupt nedlasting?)."; exit 1; }
 SRC="$TMP/kit-cc-norwegian-main"
 
 # Ikke kopier installeren selv inn i prosjektet
@@ -49,6 +52,17 @@ rm -f "$SRC/install.sh"
 # --- Kopier inn (inkl. skjulte filer). --ignore-existing rører ALDRI dine egne filer. ---
 echo "Installerer Kit CC i: $TARGET"
 rsync -a --ignore-existing "$SRC/" "$TARGET/"
+
+# --- Sørg for at secret-regler finnes i prosjektets .gitignore (idempotent) ---
+# Viktig: --ignore-existing over hopper over Kit CCs .gitignore hvis brukeren alt har en.
+# Da fletter vi Kit CCs sikkerhets-mønstre inn, så hemmeligheter ikke kan committes.
+GI="$TARGET/.gitignore"
+if [ ! -f "$GI" ] || ! grep -qxF "# Kit CC — sikkerhet (ikke commit hemmeligheter)" "$GI" 2>/dev/null; then
+  printf '\n# Kit CC — sikkerhet (ikke commit hemmeligheter)\n' >> "$GI"
+fi
+for pattern in ".env" ".env.local" "*.key" "*.pem" ".claude/" "credentials.json" "secrets/" "node_modules/"; do
+  grep -qxF "$pattern" "$GI" 2>/dev/null || printf '%s\n' "$pattern" >> "$GI"
+done
 
 echo ""
 echo "✅ Kit CC er installert i: $TARGET"

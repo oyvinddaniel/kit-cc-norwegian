@@ -1,6 +1,6 @@
 # agent-BROWNFIELD-SCANNER v1.0.0
 
-> Analyserer eksisterende kodebaser med en dynamisk agent-sverm (5–7 anbefalt, skalerer opp for store kodebaser) for å gi Kit CC full forståelse av prosjektet før faseintegrasjon.
+> Analyserer eksisterende kodebaser med en dynamisk agent-sverm (3–15 agenter, typisk 5–10) for å gi Kit CC full forståelse av prosjektet før faseintegrasjon.
 
 ---
 
@@ -72,7 +72,7 @@ FASE 1: Metadata-innsamling (bash, ~10 sek)
    └─ Produserer METADATA-kontekst som deles med alle agenter
 
 FASE 2: Parallell sverm-analyse (dynamisk antall agenter, ~1-5 min)
-   └─ Antall tilpasses kodebasen: 5–7 anbefalt, opptil 23 for store/komplekse prosjekter
+   └─ Antall tilpasses kodebasen: 3–15 (typisk 5–10), kjøres i bølger à ≤10
    └─ Hver agent leverer strukturert JSON-rapport
 
 FASE 3: Meta-analyse (2 agenter, sekvensielt)
@@ -138,7 +138,7 @@ find . -type d -name "migrations" -o -name "prisma" -o -name "drizzle" -o -name 
 ls -la prisma/schema.prisma drizzle.config.* knexfile.* 2>/dev/null
 ```
 
-**Output-format:** Lagre all output som én samlet tekstblokk i variabelen `PROJECT_METADATA`. Denne sendes som kontekst til alle 25 agenter.
+**Output-format:** Lagre all output som én samlet tekstblokk i variabelen `PROJECT_METADATA`. Denne sendes som kontekst til alle valgte agenter.
 
 **Logg:**
 ```jsonl
@@ -164,10 +164,9 @@ Antall agenter er **dynamisk: 3–15** (aldri under 3, aldri over 15). Du velger
 | Middels | 25–150 | 6–10 agenter |
 | Stor / kompleks / sensitive data | 150+ | 11–15 agenter |
 
-**2. Brukerens Claude-abonnement** — spør kort først:
-> "Hvilket Claude-abonnement har du — Max (20x), Pro (5x), eller lavere? Det avgjør hvor mange agenter jeg trygt kan kjøre parallelt."
+**2. Brukerens Claude-abonnement** — hvis du allerede vet det (f.eks. nevnt under klassifisering), bruk det. Hvis ikke: anta **Pro** og hold deg midt i spennet — ikke avbryt med et eget spørsmål midt i flyten. (Brukeren kan når som helst si «kjør færre/flere agenter».)
 
-- **Max (20x):** kjør i øvre del av spennet (opptil 15) og flere parallelt om gangen.
+- **Max (20x):** kjør i øvre del av spennet (opptil 15), i bølger à maks 10 parallelt.
 - **Pro (5x):** hold deg midt i spennet (5–8), kjør i mindre bølger.
 - **Lavere / usikker:** hold deg lavt (3–5).
 
@@ -183,7 +182,9 @@ Kombiner de to: liten kodebase + lavt abonnement → 3. Stor kodebase + Max → 
 
 Færre agenter → slå sammen grupper. Flere agenter → splitt grupper mot enkelt-domener. Uansett antall: **ALLE 23 domener skal dekkes**, og hver agent leverer én samlet JSON-rapport.
 
-**Meta-analyse (Fase 3):** Ved ≤8 agenter holder ÉN meta-agent (kombiner kryssreferanse + verifisering). Ved flere: behold begge (M01 + M02).
+**A24 (multi-tenant-revisjon):** Kjøres som et SEPARAT tillegg — alltid når prosjektet er multi-tenant ELLER klassifisert STANDARD eller høyere — uavhengig av sverm-størrelsen over. Den teller ikke mot 3–15 og skal aldri droppes selv ved en liten sverm.
+
+**Meta-analyse (Fase 3):** Ved ≤8 agenter holder ÉN meta-agent (kombiner kryssreferanse + verifisering til én pass). Ved flere: behold begge (M01 + M02).
 
 #### Kjøring
 
@@ -198,15 +199,17 @@ Hver agent MÅ returnere sin rapport som **gyldig JSON** i formatet definert i R
 
 **Logg:**
 ```jsonl
-{"ts":"<ISO 8601>","event":"START","task":"BROWNFIELD-SWARM","desc":"Fase 2: 23 kjerneagenter startet (bølge 1)","schemaVersion":1}
-{"ts":"<ISO 8601>","event":"DONE","task":"BROWNFIELD-SWARM","desc":"Alle 23 agenter fullført","schemaVersion":1}
+{"ts":"<ISO 8601>","event":"START","task":"BROWNFIELD-SWARM","desc":"Fase 2: valgte agenter startet (bølge 1)","schemaVersion":1}
+{"ts":"<ISO 8601>","event":"DONE","task":"BROWNFIELD-SWARM","desc":"Alle valgte agenter fullført","schemaVersion":1}
 ```
 
 ---
 
-### FASE 3 — Meta-analyse (2 sekvensielle agenter)
+### FASE 3 — Meta-analyse (1–2 sekvensielle agenter)
 
 > **Formål:** Kvalitetssikre funnene fra Fase 2.
+>
+> **Antall:** Ved ≤8 sverm-agenter, kjør M01 + M02 som ÉN kombinert pass (kryssreferanse + verifisering i samme agent). Ved >8: kjør dem som to separate, sekvensielle agenter som beskrevet under.
 
 **M01: Kryssreferanse og konsistens**
 - Mottar: Alle rapportene fra Fase 2 (dekker alle 23 domener)
@@ -348,7 +351,7 @@ Legg til `brownfield`-seksjon:
   "brownfield": {
     "detected": true,
     "scannedAt": "[ISO 8601]",
-    "agentsRun": 25,
+    "agentsRun": 6,
     "confidence": "HIGH|MEDIUM|LOW",
     "discoveryFile": ".ai/BROWNFIELD-DISCOVERY.md",
     "techStack": {
@@ -1455,7 +1458,7 @@ Hvis `PROJECT_METADATA` viser > 100.000 linjer kode:
 ## GUARDRAILS
 
 ### ✅ ALLTID
-- Velg antall agenter dynamisk (5–7 anbefalt) og dekk ALLE 23 domener — enten enkeltvis eller gruppert. Ingen domene skal hoppes over.
+- Velg antall agenter dynamisk (3–15, typisk 5–10) og dekk ALLE 23 domener — enten enkeltvis eller gruppert. Ingen domene skal hoppes over.
 - Del `PROJECT_METADATA` med alle agenter som kontekst
 - Valider JSON-output fra hver agent
 - La brukeren korrigere funn før de brukes av Kit CC
@@ -1548,7 +1551,7 @@ Etter skanning inkluderes `BROWNFIELD-DISCOVERY.md` som del av MISSION-BRIEFING 
 
 *Versjon: 1.0.0*
 *Opprettet: 2026-02-17*
-*Formål: Fullstendig kodebase-analyse med dynamisk agent-sverm (5–7 anbefalt) for brownfield-prosjekter*
+*Formål: Fullstendig kodebase-analyse med dynamisk agent-sverm (3–15, typisk 5–10) for brownfield-prosjekter*
 *Avhenger av: agent-AUTO-CLASSIFIER.md (trigger), PROJECT-STATE.json (state)*
 *Produserer: .ai/BROWNFIELD-DISCOVERY.md (prosjektportrett)*
 
