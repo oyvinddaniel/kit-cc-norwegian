@@ -14,13 +14,28 @@ Versjon: 3.6.0
 
 **Forutsetning:** [Claude Code](https://docs.claude.com/claude-code) må være installert.
 
-1. Last ned eller klon dette repoet til der prosjektet ditt skal bo.
-2. Åpne **Claude Code i rotmappa** — den som inneholder `CLAUDE.md`. Den fila starter hele systemet automatisk.
-3. Velg modus når Claude spør:
-   - **Bygge** — start eller fortsett å bygge prosjektet.
+Kjør installeren — den henter Kit CC og legger alt på plass (også skjulte filer), så du slipper å flytte filer manuelt:
+
+**Ny app** (installeren oppretter mappa for deg):
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh) min-nye-app
+```
+
+**App du har fra før** (stå i prosjektmappa di — Kit CC legges inn ved siden av koden din):
+```bash
+cd min-eksisterende-app
+bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh)
+```
+
+Deretter:
+1. Åpne **Claude Code i mappa** (kommandoen `claude`).
+2. Velg modus når Kit CC spør:
+   - **Bygge** — bygg en ny app, fortsett en påbegynt app, eller la Kit CC overta og videreutvikle en app du har fra før (eksisterende kode oppdages automatisk).
    - **Spørre** — få svar uten å endre noe (read-only).
 
-Det er alt. Du trenger ikke huske kommandoer — snakk i vanlig språk.
+**Tips — to chatter samtidig:** Kjør «Bygge» i én Claude Code-chat og «Spørre» i en annen. Da kan du spørre om fremdrift eller hvordan Kit CC fungerer mens byggingen pågår. Kit CC anbefaler å bygge i ÉN chat per app — flere byggende agenter i samme filer kan tråkke hverandre på tærne og skape konflikter.
+
+Du trenger ikke huske kommandoer — snakk i vanlig språk.
 
 ---
 

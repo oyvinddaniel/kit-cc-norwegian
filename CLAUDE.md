@@ -27,8 +27,14 @@
 
 **Ditt FØRSTE svar til bruker skal være dette valget:**
 > "Hva vil du gjøre?
-> 1. **Bygge** — Start eller fortsett å bygge prosjektet
-> 2. **Spørre** — Få svar uten å endre noe (read-only)"
+>
+> **1. Bygge** — velg dette hvis du skal:
+>    - bygge en **helt ny app** fra bunnen,
+>    - **fortsette** en app du allerede har startet med Kit CC, eller
+>    - la Kit CC **overta og videreutvikle en app du har fra før** (eksisterende kode i denne mappa oppdages automatisk).
+>
+> **2. Spørre** — få svar uten å endre noe (read-only).
+>    Tips: kjør gjerne «Spørre» i én Claude Code-chat *samtidig* som «Bygge» kjører i en annen — da kan du spørre om fremdrift eller hvordan Kit CC fungerer mens byggingen pågår, uten å forstyrre den. (Kit CC anbefaler å bygge i ÉN chat om gangen per app — flere byggende agenter i samme filer kan tråkke hverandre på tærne og skape konflikter.)"
 
 Vent på brukerens svar. Deretter:
 - **Spørre** → Les `Kit CC/Agenter/agenter/basis/VEILEDER-agent.md` → Følg instruksjonene → STOPP
@@ -62,7 +68,7 @@ Sjekk om `.ai/PROJECT-STATE.json` finnes:
 ### Steg 3: Nytt prosjekt (Lag 3 — engangs)
 
 1. **Les UMIDDELBART filen `Kit CC/Agenter/agenter/system/agent-AUTO-CLASSIFIER.md` og følg ALLE instruksjoner i den.** AUTO-CLASSIFIER styrer klassifiseringen — den stiller 3-5 spørsmål til bruker via progressiv avsløring. Du skal IKKE improvisere — les filen og utfør det den sier.
-2. AUTO-CLASSIFIER sjekker brownfield: ≥3 kildekodefiler → tilby `agent-BROWNFIELD-SCANNER.md` (25-agents sverm)
+2. AUTO-CLASSIFIER sjekker brownfield: ≥3 kildekodefiler → tilby `agent-BROWNFIELD-SCANNER.md` (dynamisk sverm — 5–7 agenter anbefalt, skalerer for store kodebaser)
 3. AUTO-CLASSIFIER oppretter `.ai/PROJECT-STATE.json`, `.ai/MISSION-BRIEFING-FASE-1.md`, `.ai/PROGRESS-LOG.jsonl`
 4. Sett `session.status = "active"` + `session.startedAt` = nå (ISO 8601)
 5. Spør builderMode (se steg 4, punkt 6)

@@ -140,8 +140,11 @@ Monitoren kjører lokalt på maskinen din (f.eks. `localhost:4444`) og hentes au
 ```
 Hei! Jeg er veilederen din. Du kan spørre meg om hva som helst —
 hvordan Kit CC fungerer, hvor prosjektet ditt står, eller generelle
-spørsmål om koding og teknologi. Jeg søker på nett automatisk
-når det trengs.
+spørsmål om koding og teknologi. Jeg søker på nett automatisk når
+det trengs, og kan grave dypt i hele Kit CC-systemet for å svare deg.
+
+Tips: Ha meg gjerne åpen i én chat mens du bygger i en annen — da kan
+du spørre om fremdrift mens byggingen pågår, helt uten å forstyrre den.
 
 Her er noen forslag til å komme i gang:
 
@@ -217,9 +220,13 @@ Her er noen forslag til å komme i gang:
 | Prioritet | Filer | Dekker | Status |
 |-----------|-------|--------|--------|
 | 1 | `CLAUDE.md` | Oversikt og komme-i-gang | ✅ |
-| 2 | `Kit CC/Agenter/klassifisering/KLASSIFISERING-METADATA-SYSTEM.md` | MÅ/BØR/KAN-system | ✅ |
-| 3 | `Kit CC/Agenter/klassifisering/ZONE-AUTONOMY-GUIDE.md` | Autonomisoner (grønn/gul/rød sone) | ✅ |
-| 4 | Agentfiler (`*-agent.md`, `*-ekspert.md`) | For å forklare hva en agent gjør | Bruk glob-søk |
+| 2 | `Kit CC/Agenter/agenter/system/doc-FILKATALOG.md` | **KART over HELE systemet** — alle filer, faser, protokoller | ✅ |
+| 3 | `Kit CC/Agenter/klassifisering/KLASSIFISERING-METADATA-SYSTEM.md` | MÅ/BØR/KAN-system | ✅ |
+| 4 | `Kit CC/Agenter/klassifisering/CALLING-REGISTRY.md` + `AGENT-DEPENDENCIES.md` | Hvem kaller hvem + avhengigheter mellom agentene | ✅ |
+| 5 | `Kit CC/Agenter/klassifisering/ZONE-AUTONOMY-GUIDE.md` | Autonomisoner (grønn/gul/rød sone) | ✅ |
+| 6 | Agentfiler (`*-agent.md`, `*-ekspert.md`) | For å forklare hva en agent gjør | Bruk glob-søk |
+
+**For dype/brede spørsmål om hele Kit CC:** Du trenger ikke huske hele systemet — det er for stort. **Naviger via kartet:** start alltid med `doc-FILKATALOG.md` for å finne riktige filer, og last `CALLING-REGISTRY.md` + `AGENT-DEPENDENCIES.md` når spørsmålet gjelder hvordan agentene henger sammen. Les så de konkrete filene kartet peker på. Slik når du full dybde uten å laste alt på en gang.
 
 **Fallback-strategi:** Hvis en fil ikke finnes som oppgitt:
 1. Bruk Glob-søk for å finne korrekt filsti

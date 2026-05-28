@@ -14,9 +14,12 @@ Kit CC er et komplett multi-agent system for å bygge programvare fra idé til f
 
 **Forutsetning:** [Claude Code](https://docs.claude.com/claude-code) må være installert.
 
-1. **Plasser mappa** der prosjektet ditt skal bo (f.eks. `~/prosjekter/min-app/`). Hele Kit CC-mappa er prosjektets rotmappe.
-2. **Åpne Claude Code i rotmappa** — den som inneholder `CLAUDE.md`. Den fila starter hele systemet automatisk.
-3. **Velg modus** når Claude spør (se under). Det er alt — ingen oppsett kreves på forhånd.
+Kjør installeren — den henter Kit CC og legger alt på plass (også skjulte filer), så du slipper å flytte filer manuelt:
+
+- **Ny app** (oppretter mappa): `bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh) min-nye-app`
+- **App fra før:** stå i prosjektmappa di og kjør `bash <(curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh)` — Kit CC legges inn ved siden av koden din.
+
+Deretter: åpne **Claude Code i mappa** (kommandoen `claude`) og velg modus (se under).
 
 **Kit CC Monitor (lokalt dashboard):** Starter automatisk ved behov og installerer seg selv første gang. Du trenger ikke gjøre noe. Vil du bruke AI-funksjonene inne i Monitor, legger du inn API-nøkkelen din i Monitorens eget oppsett-panel (ikke i en fil) — alt annet fungerer uten nøkkel.
 
@@ -26,8 +29,10 @@ Kit CC er et komplett multi-agent system for å bygge programvare fra idé til f
 
 | Modus | Beskrivelse |
 |-------|-------------|
-| **Bygge** | Start eller fortsett å bygge prosjektet (full skrivetilgang) |
+| **Bygge** | Ny app, fortsett en påbegynt app, eller la Kit CC overta en app du har fra før — eksisterende kode oppdages automatisk (full skrivetilgang) |
 | **Spørre** | Få svar uten å endre noe (read-only, VEILEDER-agent) |
+
+**Tips — to chatter samtidig:** Kjør «Bygge» i én Claude Code-chat og «Spørre» i en annen. Da kan du spørre om fremdrift mens byggingen pågår. Kit CC anbefaler å bygge i ÉN chat per app — flere byggende agenter i samme filer kan tråkke hverandre på tærne og skape konflikter.
 
 ---
 
