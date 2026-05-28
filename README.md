@@ -29,6 +29,8 @@ curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/
 bash kitcc-install.sh
 ```
 
+> ⚠️ **Har du en app fra før? Ta backup FØR du bygger.** Kit CC kommer til å endre filer i appen din. Commit alt til git (`git init && git add -A && git commit -m "før Kit CC"`) eller kopier mappa et trygt sted, så du kan gå tilbake hvis noe breaker. Kit CC minner deg på dette — men gjør det gjerne med en gang.
+
 Deretter:
 1. Åpne **Claude Code i mappa** (kommandoen `claude`).
 2. Velg modus når Kit CC spør:

@@ -68,7 +68,9 @@ Sjekk om `.ai/PROJECT-STATE.json` finnes:
 ### Steg 3: Nytt prosjekt (Lag 3 — engangs)
 
 1. **Les UMIDDELBART filen `Kit CC/Agenter/agenter/system/agent-AUTO-CLASSIFIER.md` og følg ALLE instruksjoner i den.** AUTO-CLASSIFIER styrer klassifiseringen — den stiller 3-5 spørsmål til bruker via progressiv avsløring. Du skal IKKE improvisere — les filen og utfør det den sier.
-2. AUTO-CLASSIFIER sjekker brownfield: ≥3 kildekodefiler → tilby `agent-BROWNFIELD-SCANNER.md` (dynamisk sverm — 3–15 agenter, typisk 5–10)
+2. AUTO-CLASSIFIER sjekker brownfield: ≥3 kildekodefiler →
+   - **a. BACKUP-GATE (obligatorisk, FØR noe annet):** ADVAR brukeren eksplisitt: «Kit CC kommer til å endre filer i den eksisterende appen din. Ta backup NÅ — commit alt til git (`git init && git add -A && git commit -m "før Kit CC"`) eller kopier hele mappa et trygt sted — så du kan gå tilbake hvis noe breaker.» **Vent på at brukeren bekrefter at backup er tatt før du fortsetter.**
+   - **b.** Tilby så `agent-BROWNFIELD-SCANNER.md` (dynamisk sverm — 3–15 agenter, typisk 5–10)
 3. AUTO-CLASSIFIER oppretter `.ai/PROJECT-STATE.json`, `.ai/MISSION-BRIEFING-FASE-1.md`, `.ai/PROGRESS-LOG.jsonl`
 4. Sett `session.status = "active"` + `session.startedAt` = nå (ISO 8601)
 5. Spør builderMode (se steg 4, punkt 6)

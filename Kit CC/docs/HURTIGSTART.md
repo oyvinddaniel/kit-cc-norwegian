@@ -28,6 +28,8 @@ curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/
 bash kitcc-install.sh
 ```
 
+> ⚠️ **Ta backup FØR du bygger** når du har en app fra før. Kit CC endrer filer i appen din — commit til git (`git init && git add -A && git commit -m "før Kit CC"`) eller kopier mappa, så du kan gå tilbake hvis noe breaker.
+
 Deretter: åpne **Claude Code i mappa** (kommandoen `claude`) og velg modus (se under).
 
 **Kit CC Monitor (lokalt dashboard):** Starter automatisk ved behov og installerer seg selv første gang. Du trenger ikke gjøre noe. Vil du bruke AI-funksjonene inne i Monitor, legger du inn API-nøkkelen din i Monitorens eget oppsett-panel (ikke i en fil) — alt annet fungerer uten nøkkel.

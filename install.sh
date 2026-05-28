@@ -38,6 +38,10 @@ if [ -f "$TARGET/CLAUDE.md" ] && grep -q "Kit CC" "$TARGET/CLAUDE.md" 2>/dev/nul
   exit 1
 fi
 
+# --- Oppdag om dette er en eksisterende app (brownfield) — for backup-advarsel ---
+BROWNFIELD=0
+[ "$(find "$TARGET" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')" -gt 0 ] && BROWNFIELD=1
+
 # --- Last ned Kit CC til en midlertidig mappe ---
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -71,3 +75,11 @@ echo "Neste steg:"
 echo "  1. Åpne Claude Code i mappa:   cd \"$TARGET\" && claude"
 echo "  2. Velg «Bygge» når Kit CC spør."
 echo "     Har du eksisterende kode her fra før? Kit CC oppdager den automatisk."
+
+if [ "$BROWNFIELD" = "1" ]; then
+  echo ""
+  echo "⚠️  VIKTIG — du installerte i en mappe som allerede har filer."
+  echo "    TA BACKUP FØR DU BYGGER, så du kan gå tilbake hvis noe breaker:"
+  echo "      git init && git add -A && git commit -m \"før Kit CC\""
+  echo "    (eller kopier hele mappa et trygt sted)."
+fi

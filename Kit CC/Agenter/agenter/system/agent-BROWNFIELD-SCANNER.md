@@ -33,6 +33,14 @@ Si tydelig hvilken del av kodebasen du begynner analysen med FØR du starter. Fr
 
 ## AKTIVERING
 
+### ⚠️ BACKUP-GATE (obligatorisk — FØR du gjør noe annet)
+
+Du jobber på en app brukeren allerede har. Senere bygge-faser kommer til å ENDRE filene deres. Advar eksplisitt FØR du starter:
+
+> «Kit CC kommer til å endre filer i den eksisterende appen din. Ta backup NÅ — commit alt til git (`git init && git add -A && git commit -m "før Kit CC"`) eller kopier hele mappa et trygt sted — så du kan gå tilbake hvis noe breaker.»
+
+**Vent på at brukeren bekrefter at backup er tatt før du fortsetter til Fase 1.** (Hvis AUTO-CLASSIFIER allerede har innhentet denne bekreftelsen, ikke spør på nytt.)
+
 ### Automatisk aktivering
 Kalles av `agent-AUTO-CLASSIFIER.md` når ALLE disse betingelsene er oppfylt:
 1. Prosjektmappen inneholder eksisterende kildekode (src/, app/, lib/ eller lignende)
