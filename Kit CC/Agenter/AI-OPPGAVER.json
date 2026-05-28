@@ -1,0 +1,733 @@
+{
+  "meta": {
+    "prosjekt": "Bygge Agent-System for Kit CC",
+    "versjon": "3.6.0",
+    "opprettet": "2026-01-31",
+    "sistOppdatert": "2026-04-22",
+    "totalAgenter": 57,
+    "ferdigeAgenter": 57,
+    "gjenståendeAgenter": 0,
+    "fordeling": {
+      "system": 6,
+      "basis": 7,
+      "prosess": 7,
+      "ekspert": 37
+    },
+    "status": "FERDIG",
+    "researchBasert": true,
+    "researchDato": "2026-01-31",
+    "researchKilder": [
+      "IBM",
+      "DEV Community",
+      "TestGuild",
+      "Endor Labs",
+      "Claude-Flow",
+      "Kagent"
+    ]
+  },
+  "nivåer": {
+    "0_system": {
+      "beskrivelse": "Infrastruktur og orkestrering - kjører automatisk",
+      "prioritet": 1,
+      "status": "ferdig",
+      "agenter": [
+        {
+          "id": "SYS-001",
+          "navn": "ORCHESTRATOR",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 1,
+          "filsti": "agenter/system/agent-ORCHESTRATOR.md",
+          "beskrivelse": "Sentral koordinator, ruter oppgaver, håndterer handoffs"
+        },
+        {
+          "id": "SYS-002",
+          "navn": "CONTEXT-LOADER",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 2,
+          "filsti": "agenter/system/agent-CONTEXT-LOADER.md",
+          "beskrivelse": "Laster prosjektkontekst ved session-start"
+        },
+        {
+          "id": "SYS-003",
+          "navn": "AUTO-CLASSIFIER",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 3,
+          "filsti": "agenter/system/agent-AUTO-CLASSIFIER.md",
+          "beskrivelse": "Klassifiserer prosjekt (minimal→enterprise)"
+        },
+        {
+          "id": "SYS-004",
+          "navn": "PHASE-GATES",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 4,
+          "filsti": "agenter/system/agent-PHASE-GATES.md",
+          "beskrivelse": "Validerer fase-overganger, kvalitetsporter"
+        },
+        {
+          "id": "SYS-005",
+          "navn": "AGENT-PROTOCOL",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 5,
+          "filsti": "agenter/system/agent-AGENT-PROTOCOL.md",
+          "beskrivelse": "Kommunikasjonsstandard (referanse)"
+        },
+        {
+          "id": "SYS-006",
+          "navn": "BROWNFIELD-SCANNER",
+          "type": "system",
+          "status": "ferdig",
+          "prioritet": 6,
+          "filsti": "agenter/system/agent-BROWNFIELD-SCANNER.md",
+          "beskrivelse": "25-agents sverm for analyse av eksisterende kodebaser (brownfield)"
+        }
+      ]
+    },
+    "1_basis": {
+      "beskrivelse": "Tverrfaglige verktøy som brukes på tvers av faser",
+      "prioritet": 2,
+      "status": "ferdig",
+      "agenter": [
+        {
+          "id": "BAS-001",
+          "navn": "PLANLEGGER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/PLANLEGGER-agent.md",
+          "beskrivelse": "PRD, oppgavenedbrytning, strategisk planlegging"
+        },
+        {
+          "id": "BAS-002",
+          "navn": "BYGGER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/BYGGER-agent.md",
+          "beskrivelse": "Implementerer kode i 3 stages (UI→Funksjon→Sikkerhet)"
+        },
+        {
+          "id": "BAS-003",
+          "navn": "REVIEWER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/REVIEWER-agent.md",
+          "beskrivelse": "Code review, kvalitetssjekk"
+        },
+        {
+          "id": "BAS-004",
+          "navn": "SIKKERHETS-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/SIKKERHETS-agent.md",
+          "beskrivelse": "Security audit, sårbarhetssjekk, input-validering"
+        },
+        {
+          "id": "BAS-005",
+          "navn": "DEBUGGER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/DEBUGGER-agent.md",
+          "beskrivelse": "Feilsøking, bug-fixing, root cause analysis"
+        },
+        {
+          "id": "BAS-006",
+          "navn": "DOKUMENTERER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/DOKUMENTERER-agent.md",
+          "beskrivelse": "README, API-docs, teknisk dokumentasjon"
+        },
+        {
+          "id": "BAS-007",
+          "navn": "VEILEDER-agent",
+          "type": "basis",
+          "status": "ferdig",
+          "filsti": "agenter/basis/VEILEDER-agent.md",
+          "beskrivelse": "Read-only spørremodus — svarer på spørsmål uten å endre filer"
+        }
+      ]
+    },
+    "2_prosess": {
+      "beskrivelse": "Én per fase - koordinerer og kaller eksperter",
+      "prioritet": 3,
+      "status": "ferdig",
+      "agenter": [
+        {
+          "id": "PRO-001",
+          "navn": "OPPSTART-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 1,
+          "filsti": "agenter/prosess/1-OPPSTART-agent.md",
+          "beskrivelse": "Fase 1 Idé og visjon: Idé, visjon, risikovurdering, dataklassifisering"
+        },
+        {
+          "id": "PRO-002",
+          "navn": "KRAV-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 2,
+          "filsti": "agenter/prosess/2-KRAV-agent.md",
+          "beskrivelse": "Fase 2 Planlegg: Brukerhistorier, sikkerhetskrav, MVP-definisjon"
+        },
+        {
+          "id": "PRO-003",
+          "navn": "ARKITEKTUR-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 3,
+          "filsti": "agenter/prosess/3-ARKITEKTUR-agent.md",
+          "beskrivelse": "Tech stack, database-design, API-design, trusselmodell"
+        },
+        {
+          "id": "PRO-004",
+          "navn": "MVP-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 4,
+          "filsti": "agenter/prosess/4-MVP-agent.md",
+          "beskrivelse": "Prosjektoppsett, Git, CI/CD, første prototype"
+        },
+        {
+          "id": "PRO-005",
+          "navn": "ITERASJONS-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 5,
+          "filsti": "agenter/prosess/5-ITERASJONS-agent.md",
+          "beskrivelse": "Fase 5 Bygg funksjonene: Feature-utvikling, code review, brukervalidering"
+        },
+        {
+          "id": "PRO-006",
+          "navn": "KVALITETSSIKRINGS-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 6,
+          "filsti": "agenter/prosess/6-KVALITETSSIKRINGS-agent.md",
+          "beskrivelse": "Fase 6 Test, sikkerhet og kvalitetssjekk: E2E-testing, sikkerhetstesting, compliance"
+        },
+        {
+          "id": "PRO-007",
+          "navn": "PUBLISERINGS-agent",
+          "type": "prosess",
+          "status": "ferdig",
+          "fase": 7,
+          "filsti": "agenter/prosess/7-PUBLISERINGS-agent.md",
+          "beskrivelse": "Fase 7 Publiser og vedlikehold: Deploy, monitoring, vedlikehold, IR-plan"
+        }
+      ]
+    },
+    "3_ekspert": {
+      "beskrivelse": "Spesialister som kalles av prosess-agenter ved behov",
+      "prioritet": 4,
+      "status": "ferdig",
+      "agenter": [
+        {
+          "id": "EKS-001",
+          "navn": "PERSONA-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            1
+          ],
+          "filsti": "agenter/ekspert/PERSONA-ekspert.md",
+          "beskrivelse": "Jobs-to-be-Done, målgruppeanalyse, personas, brukerreise"
+        },
+        {
+          "id": "EKS-002",
+          "navn": "LEAN-CANVAS-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            1
+          ],
+          "filsti": "agenter/ekspert/LEAN-CANVAS-ekspert.md",
+          "beskrivelse": "Forretningsmodell, kostnadsestimering, verdiforslag"
+        },
+        {
+          "id": "EKS-003",
+          "navn": "KONKURRANSEANALYSE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            1
+          ],
+          "filsti": "agenter/ekspert/KONKURRANSEANALYSE-ekspert.md",
+          "beskrivelse": "Markedsanalyse, differensiering, blue ocean"
+        },
+        {
+          "id": "EKS-004",
+          "navn": "WIREFRAME-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            2
+          ],
+          "filsti": "agenter/ekspert/WIREFRAME-ekspert.md",
+          "beskrivelse": "UI-skisser, brukerflyt, low-fidelity prototyper"
+        },
+        {
+          "id": "EKS-005",
+          "navn": "API-DESIGN-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            2,
+            3
+          ],
+          "filsti": "agenter/ekspert/API-DESIGN-ekspert.md",
+          "beskrivelse": "OpenAPI/Swagger, REST-design, maskinlesbare specs"
+        },
+        {
+          "id": "EKS-006",
+          "navn": "TRUSSELMODELLERINGS-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            3
+          ],
+          "filsti": "agenter/ekspert/TRUSSELMODELLERINGS-ekspert.md",
+          "beskrivelse": "STRIDE-analyse, DREAD-rangering, attack surfaces"
+        },
+        {
+          "id": "EKS-007",
+          "navn": "DATAMODELL-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            3
+          ],
+          "filsti": "agenter/ekspert/DATAMODELL-ekspert.md",
+          "beskrivelse": "ER-diagram, normalisering, RLS, indeksering"
+        },
+        {
+          "id": "EKS-008",
+          "navn": "HEMMELIGHETSSJEKK-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            6
+          ],
+          "filsti": "agenter/ekspert/HEMMELIGHETSSJEKK-ekspert.md",
+          "beskrivelse": "Secrets-scanning, .env-håndtering, git-historikk"
+        },
+        {
+          "id": "EKS-009",
+          "navn": "CICD-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            7
+          ],
+          "filsti": "agenter/ekspert/CICD-ekspert.md",
+          "beskrivelse": "GitHub Actions, pipelines, automatisering"
+        },
+        {
+          "id": "EKS-010",
+          "navn": "SUPPLY-CHAIN-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4
+          ],
+          "filsti": "agenter/ekspert/SUPPLY-CHAIN-ekspert.md",
+          "beskrivelse": "Package-verifisering, lockfiles, SBOM, typosquatting"
+        },
+        {
+          "id": "EKS-011",
+          "navn": "BRUKERTEST-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5
+          ],
+          "filsti": "agenter/ekspert/BRUKERTEST-ekspert.md",
+          "beskrivelse": "Brukervalidering, feedback-analyse, usability"
+        },
+        {
+          "id": "EKS-012",
+          "navn": "YTELSE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/YTELSE-ekspert.md",
+          "beskrivelse": "Lighthouse, Core Web Vitals, optimalisering"
+        },
+        {
+          "id": "EKS-013",
+          "navn": "UIUX-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5
+          ],
+          "filsti": "agenter/ekspert/UIUX-ekspert.md",
+          "beskrivelse": "Polering, loading states, responsivitet, micro-interaksjoner"
+        },
+        {
+          "id": "EKS-014",
+          "navn": "REFAKTORING-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5,
+            7
+          ],
+          "filsti": "agenter/ekspert/REFAKTORING-ekspert.md",
+          "beskrivelse": "Teknisk gjeld, kode-duplisering, arkitektur-rot"
+        },
+        {
+          "id": "EKS-015",
+          "navn": "OWASP-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/OWASP-ekspert.md",
+          "beskrivelse": "OWASP Top 10:2025, penetrasjonstesting, sårbarheter"
+        },
+        {
+          "id": "EKS-016",
+          "navn": "GDPR-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/GDPR-ekspert.md",
+          "beskrivelse": "Personvernforordningen, DPIA, samtykke, sletting"
+        },
+        {
+          "id": "EKS-017",
+          "navn": "TILGJENGELIGHETS-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/TILGJENGELIGHETS-ekspert.md",
+          "beskrivelse": "WCAG 2.2 AA, skjermleser, tastaturnavigasjon"
+        },
+        {
+          "id": "EKS-018",
+          "navn": "CROSS-BROWSER-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/CROSS-BROWSER-ekspert.md",
+          "beskrivelse": "Safari-quirks, CSS-kompatibilitet, polyfills"
+        },
+        {
+          "id": "EKS-019",
+          "navn": "LASTTEST-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/LASTTEST-ekspert.md",
+          "beskrivelse": "Load testing, stress testing, k6/Artillery"
+        },
+        {
+          "id": "EKS-020",
+          "navn": "MONITORING-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            7
+          ],
+          "filsti": "agenter/ekspert/MONITORING-ekspert.md",
+          "beskrivelse": "Sentry, logging, SLI/SLO, golden signals, alerting"
+        },
+        {
+          "id": "EKS-021",
+          "navn": "INCIDENT-RESPONSE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            7
+          ],
+          "filsti": "agenter/ekspert/INCIDENT-RESPONSE-ekspert.md",
+          "beskrivelse": "IR-plan, eskalering, post-mortem, beredskap"
+        },
+        {
+          "id": "EKS-022",
+          "navn": "BACKUP-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            7
+          ],
+          "filsti": "agenter/ekspert/BACKUP-ekspert.md",
+          "beskrivelse": "3-2-1-regel, disaster recovery, gjenoppretting"
+        },
+        {
+          "id": "EKS-023",
+          "navn": "AI-GOVERNANCE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            6
+          ],
+          "filsti": "agenter/ekspert/AI-GOVERNANCE-ekspert.md",
+          "beskrivelse": "AI-generert kode dokumentasjon, prompt-sporing, governance compliance"
+        },
+        {
+          "id": "EKS-024",
+          "navn": "TEST-GENERATOR-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/TEST-GENERATOR-ekspert.md",
+          "beskrivelse": "Automatisk generering av unit-tester og E2E-tester"
+        },
+        {
+          "id": "EKS-025",
+          "navn": "SELF-HEALING-TEST-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/SELF-HEALING-TEST-ekspert.md",
+          "beskrivelse": "Automatisk vedlikehold av testsuiter når app endres"
+        },
+        {
+          "id": "EKS-026",
+          "navn": "INFRASTRUKTUR-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            7
+          ],
+          "filsti": "agenter/ekspert/INFRASTRUKTUR-ekspert.md",
+          "beskrivelse": "Kubernetes, cloud-native oppsett, IaC, container-sikkerhet"
+        },
+        {
+          "id": "EKS-027",
+          "navn": "DESIGN-TIL-KODE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5
+          ],
+          "filsti": "agenter/ekspert/DESIGN-TIL-KODE-ekspert.md",
+          "beskrivelse": "Figma til React/Vue-komponenter, design system-implementering"
+        },
+        {
+          "id": "EKS-028",
+          "navn": "PROMPT-INGENIØR-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            "alle"
+          ],
+          "filsti": "agenter/ekspert/PROMPT-INGENIØR-ekspert.md",
+          "beskrivelse": "Validerer og forbedrer prompts, prompt-bibliotek"
+        },
+        {
+          "id": "EKS-029",
+          "navn": "MIGRASJON-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5,
+            7
+          ],
+          "filsti": "agenter/ekspert/MIGRASJON-ekspert.md",
+          "beskrivelse": "Oppgraderer dependencies, migrerer mellom versjoner"
+        },
+        {
+          "id": "EKS-030",
+          "navn": "SRE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            7
+          ],
+          "filsti": "agenter/ekspert/SRE-ekspert.md",
+          "beskrivelse": "Site Reliability Engineering, SLI/SLO-definisjon, error budgets"
+        },
+        {
+          "id": "EKS-031",
+          "navn": "CODE-QUALITY-GATE-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/CODE-QUALITY-GATE-ekspert.md",
+          "beskrivelse": "Automatisk code quality og security scanning av AI-generert kode"
+        },
+        {
+          "id": "EKS-032",
+          "navn": "TESTSKRIVER-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/TESTSKRIVER-ekspert.md",
+          "beskrivelse": "Automatisert testgenerering og test coverage-analyse (parallelt til TEST-GENERATOR)"
+        },
+        {
+          "id": "EKS-033",
+          "navn": "GORGEOUS-UI-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5
+          ],
+          "filsti": "agenter/ekspert/GORGEOUS-UI-ekspert.md",
+          "beskrivelse": "Design system og polert UI-implementasjon (MVP-00, MVP-10, ITR-10)"
+        },
+        {
+          "id": "EKS-034",
+          "navn": "FEATURE-FLAGS-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            5
+          ],
+          "filsti": "agenter/ekspert/FEATURE-FLAGS-ekspert.md",
+          "beskrivelse": "Feature flag-strategi og gradual rollout (profesjonell pakke, STANDARD+)"
+        },
+        {
+          "id": "EKS-035",
+          "navn": "RLS-TESTER-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            4,
+            6
+          ],
+          "filsti": "agenter/ekspert/RLS-TESTER-ekspert.md",
+          "beskrivelse": "Row-level security-testing for multi-tenant-prosjekter (profesjonell pakke)"
+        },
+        {
+          "id": "EKS-036",
+          "navn": "SCHEMA-MIGRASJON-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            3,
+            4,
+            5
+          ],
+          "filsti": "agenter/ekspert/SCHEMA-MIGRASJON-ekspert.md",
+          "beskrivelse": "Database-migrasjonsstrategi med null-downtime (profesjonell pakke, STANDARD+)"
+        },
+        {
+          "id": "EKS-037",
+          "navn": "HALLUSINASJON-DETEKTOR-ekspert",
+          "type": "ekspert",
+          "status": "ferdig",
+          "faser": [
+            5,
+            6
+          ],
+          "filsti": "agenter/ekspert/HALLUSINASJON-DETEKTOR-ekspert.md",
+          "beskrivelse": "Detekterer AI-hallusinasjoner i genererte svar (profesjonell pakke)"
+        }
+      ]
+    }
+  },
+  "statistikk": {
+    "systemAgenter": {
+      "total": 6,
+      "ferdig": 6
+    },
+    "basisAgenter": {
+      "total": 7,
+      "ferdig": 7
+    },
+    "prosessAgenter": {
+      "total": 7,
+      "ferdig": 7
+    },
+    "ekspertAgenter": {
+      "total": 37,
+      "ferdig": 37
+    },
+    "totalt": {
+      "total": 57,
+      "ferdig": 57
+    }
+  },
+  "støtteFiler": {
+    "beskrivelse": "Referanse-dokumenter og system-protokoller",
+    "filer": [
+      {
+        "navn": "CODE-QUALITY-GATES.md",
+        "type": "referanse",
+        "filsti": "agenter/system/protocol-CODE-QUALITY-GATES.md",
+        "beskrivelse": "Kvalitetsporter og gate-kriterier for kode"
+      },
+      {
+        "navn": "INTENSITY-MATRIX.md",
+        "type": "referanse",
+        "filsti": "agenter/system/doc-INTENSITY-MATRIX.md",
+        "beskrivelse": "Intensitetsnivå-matrise for prosjektklassifisering"
+      },
+      {
+        "navn": "QUICK-REFERENCE-TASK-QUALITY.md",
+        "type": "referanse",
+        "filsti": "agenter/system/doc-QUICK-REFERENCE-TASK-QUALITY.md",
+        "beskrivelse": "Hurtigreferanse for oppgavekvalitet"
+      },
+      {
+        "navn": "TASK-COMPLEXITY-ASSESSMENT.md",
+        "type": "referanse",
+        "filsti": "agenter/system/protocol-TASK-COMPLEXITY-ASSESSMENT.md",
+        "beskrivelse": "Vurdering av oppgavekompleksitet"
+      },
+      {
+        "navn": "SYSTEM-PROTOCOL.md",
+        "type": "protokoll",
+        "filsti": "agenter/system/protocol-SYSTEM-COMMUNICATION.md",
+        "beskrivelse": "System-protokoll og kommunikasjonsstandard"
+      }
+    ]
+  },
+  "byggelogg": [
+    {
+      "dato": "2026-02-01",
+      "hendelse": "Alle 50 agenter ferdigstilt (opprinnelig telling)",
+      "detaljer": "Parallell bygging med 6 subagenter"
+    },
+    {
+      "dato": "2026-02-04",
+      "hendelse": "CODE-QUALITY-GATE-ekspert lagt til",
+      "detaljer": "Orphan agent (EKS-031) registrert i JSON - automatisk code quality og security scanning"
+    },
+    {
+      "dato": "2026-04-22",
+      "hendelse": "Agent-tellinger korrigert til 57 totalt (6+7+7+37)",
+      "detaljer": "Synkronisert med CALLING-REGISTRY v2.1.0 og AGENT-DEPENDENCIES v2.1.0. La til BROWNFIELD-SCANNER (system), VEILEDER (basis), og bekreftet profesjonell-pakke-eksperter + GORGEOUS-UI + TESTSKRIVER i ekspert-registeret."
+    }
+  ]
+}

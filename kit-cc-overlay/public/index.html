@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kit CC Monitor</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #08060e;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* Animated gradient orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      top: -15%; left: -10%;
+      background: radial-gradient(circle, rgba(138, 0, 255, 0.3) 0%, transparent 70%);
+      animation: orb1 12s ease-in-out infinite;
+    }
+    body::after {
+      width: 500px; height: 500px;
+      bottom: -20%; right: -10%;
+      background: radial-gradient(circle, rgba(80, 0, 200, 0.25) 0%, transparent 70%);
+      animation: orb2 15s ease-in-out infinite;
+    }
+    @keyframes orb1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 40px) scale(1.15); }
+    }
+    @keyframes orb2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-50px, -30px) scale(1.1); }
+    }
+
+    /* Subtle grid overlay */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        linear-gradient(rgba(138, 0, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(138, 0, 255, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .splash {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      max-width: 780px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Logo */
+    .splash .logo-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 1rem;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #8A00FF 0%, #5800B0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      box-shadow: 0 6px 32px rgba(138, 0, 255, 0.4), 0 0 0 1px rgba(138, 0, 255, 0.2);
+    }
+
+    .splash .brand {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 2.2rem;
+    }
+
+    /* Project name */
+    .splash .project-name {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .splash .welcome {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    /* ─── Guide section ─── */
+    .splash .guide {
+      margin-top: 3rem;
+      margin-bottom: 3rem;
+      display: none;
+    }
+    .splash .guide.visible {
+      display: block;
+      animation: fadeUp 0.6s ease-out both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .splash .guide-steps {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 16px;
+    }
+
+    /* Glassmorphism step cards */
+    .splash .guide-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 28px 20px 24px;
+      border-radius: 16px;
+      background: rgba(138, 0, 255, 0.06);
+      border: 1px solid rgba(138, 0, 255, 0.15);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+    .splash .guide-step:hover {
+      border-color: rgba(138, 0, 255, 0.35);
+      background: rgba(138, 0, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Step number circle */
+    .splash .guide-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(138, 0, 255, 0.35), rgba(100, 0, 200, 0.2));
+      border: 1px solid rgba(138, 0, 255, 0.4);
+      color: #d4b0ff;
+      font-size: 1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(138, 0, 255, 0.2);
+    }
+
+    /* Step heading */
+    .splash .guide-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Step description */
+    .splash .guide-desc {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.6;
+    }
+
+    /* Connector arrows between cards */
+    .splash .guide-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 20px;
+      color: rgba(138, 0, 255, 0.35);
+      font-size: 0.9rem;
+    }
+
+    /* Closing */
+    .splash .guide-closing {
+      margin-top: 3rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── Status badge ─── */
+    .splash .status {
+      position: fixed;
+      top: 40px;
+      left: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.45);
+      background: rgba(138, 0, 255, 0.08);
+      border: 1px solid rgba(138, 0, 255, 0.15);
+      border-radius: 24px;
+      padding: 8px 20px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 2;
+    }
+    .splash .status .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* ─── Hand-drawn arrow pointing to KC badge ─── */
+    .splash-arrow {
+      position: fixed;
+      bottom: 68px;
+      right: 53px;
+      display: none;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .splash-arrow * {
+      pointer-events: none;
+    }
+    .splash-arrow.visible {
+      display: block;
+      animation: arrowFadeIn 0.5s ease-out both, arrowNudge 2s ease-in-out 0.5s infinite;
+    }
+    .splash-arrow svg {
+      width: 90px;
+      height: 90px;
+      transform: scaleX(1) scaleY(1);
+    }
+    @keyframes arrowNudge {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(3px, 4px); }
+    }
+    @keyframes arrowFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .splash { padding: 2rem 1.2rem; }
+      .splash .project-name { font-size: 1.7rem; }
+      .splash .guide-steps {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .splash .guide-step {
+        flex-direction: row;
+        text-align: left;
+        padding: 18px 20px;
+        gap: 16px;
+      }
+      .splash .guide-num {
+        width: 36px; height: 36px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+      .splash .guide-step-content { flex: 1; }
+      .splash .guide-heading { margin-bottom: 4px; }
+      .splash .guide-connector { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="splash">
+    <div class="logo-icon">KC</div>
+    <div class="brand">Kit CC Monitor</div>
+    <div class="project-name" id="projectName">Laster prosjekt...</div>
+    <p class="welcome" id="welcomeText">Kobler til...</p>
+    <div class="guide" id="splashGuide">
+      <div class="guide-steps">
+        <div class="guide-step">
+          <span class="guide-num">1</span>
+          <div class="guide-step-content">
+            <div class="guide-heading">I gang!</div>
+            <div class="guide-desc">Prosjektet ditt er i gang. Kit CC planlegger og forbereder alt som trengs.</div>
+          </div>
+        </div>
+        <div class="guide-connector">&rsaquo;</div>
+        <div class="guide-step">
+          <span class="guide-num">2</span>
+          <div class="guide-step-content">
+            <div class="guide-heading">Bruk Monitor</div>
+            <div class="guide-desc">Du bygger med AI og kan bruke Monitor til oversikt, planlegge nye funksjoner og koble til tjenester.</div>
+          </div>
+        </div>
+        <div class="guide-connector">&rsaquo;</div>
+        <div class="guide-step">
+          <span class="guide-num">3</span>
+          <div class="guide-step-content">
+            <div class="guide-heading">Første versjon</div>
+            <div class="guide-desc">Når Kit CC har bygd din MVP, forsvinner denne skjermen og appen din tar over.</div>
+          </div>
+        </div>
+      </div>
+      <div class="guide-closing">Lykke til!</div>
+    </div>
+    <div class="status">
+      <span class="dot"></span>
+      <span id="statusText">Starter opp</span>
+    </div>
+  </div>
+  <div class="splash-arrow" id="splashArrow">
+    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#7400dc" stroke="none" d="M 458.792572 368.646515 C 451.134094 338.158142 443.46228 307.031555 433.264191 277.234528 C 432.572815 274.694946 412.841095 277.659912 412.854401 278.298096 C 417.335083 309.491211 424.342072 339.354675 431.362335 369.856323 C 434.181091 382.567566 442.929932 404.094299 441.360901 420.727905 C 432.944397 415.156769 424.514587 408.947388 416.084778 402.737976 C 424.368378 401.92691 434.540009 399.799591 434.540009 399.799591 C 398.042236 302.869568 339.3396 212.787018 258.166199 147.435455 C 196.458435 97.002411 115.697098 51.435669 33.645725 66.553131 C 22.835871 68.693787 49.667725 69.411896 53.483791 68.693939 C 94.196976 61.460968 149.828445 96.058136 182.829681 117.079681 C 217.120667 138.712891 247.675369 164.893433 275.743652 194.318207 C 329.287476 251.306305 368.391449 320.088074 400.514923 390.930817 C 388.84082 382.234955 377.804932 373.525848 366.755798 364.178528 C 360.267273 359.205719 341.958221 369.16452 337.410919 365.428223 C 367.965637 391.608765 399.730286 414.571533 433.383087 436.218079 C 437.903778 438.677917 458.965088 438.239227 462.727966 434.968353 C 479.694031 421.845001 462.980804 385.798767 458.792572 368.646515 Z"/>
+    </svg>
+  </div>
+  <script defer src="/splash.js"></script>
+  <script defer src="/overlay.js"></script>
+  <script>
+    // Vis feilmelding hvis overlay.js ikke laster innen 10 sekunder
+    setTimeout(function() {
+      if (!customElements.get('kit-cc-overlay')) {
+        document.getElementById('statusText').textContent = 'Kunne ikke laste Monitor — prøv å laste siden på nytt';
+      }
+    }, 10000);
+  </script>
+</body>
+</html>

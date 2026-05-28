@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "updatedAt": "2026-04-22",
+    "description": "Kit CC hooks-konfigurasjon"
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": ".*", "hooks": [
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/prod-db-write-block.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/git-main-commit-block.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/supabase-prod-push-block.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/env-file-write-block.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/service-role-key-leak-block.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/rm-rf-guard.sh" },
+        { "type": "command", "command": ".claude/hooks/pre-tool-use/prod-curl-block.sh" }
+      ]}
+    ],
+    "PostToolUse": [
+      { "matcher": ".*", "hooks": [
+        { "type": "command", "command": ".claude/hooks/post-tool-use/audit-logger.sh" }
+      ]}
+    ],
+    "SessionStart": [
+      { "hooks": [
+        { "type": "command", "command": ".claude/hooks/session-start/context-loader.sh" }
+      ]}
+    ]
+  }
+}

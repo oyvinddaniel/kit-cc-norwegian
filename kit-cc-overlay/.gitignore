@@ -1,0 +1,21 @@
+# Avhengigheter (installeres på nytt med npm install)
+node_modules/
+
+# Testdata fra kjøring
+*.db
+*.db-wal
+*.db-shm
+
+# OS-filer
+.DS_Store
+Thumbs.db
+
+# Loggfiler
+*.log
+
+# Auth, krypto og runtime-filer
+.auth-token
+.master-key
+monitor.pid
+.telemetry-consent
+.update-cache.json

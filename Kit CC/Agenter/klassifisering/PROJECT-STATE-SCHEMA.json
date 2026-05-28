@@ -1,0 +1,1298 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "PROJECT-STATE-SCHEMA",
+  "version": "3.6.0",
+  "title": "PROJECT-STATE.json Schema",
+  "description": "Validerings-schema for prosjekttilstand. AI vedlikeholder dette automatisk. v3.5.2 (2026-04-22): Utvidet integrations.detected.category enum med overlay-katalogens 13 kategorier (auth, storage, analytics, ai, cms, monitoring, video). Lagt til safety-backup i checkpoints.type enum. Lagt til lastRestore, pendingTasks[].source og pendingTasks.priority 'blocking'. Lagt til checkpoints[].id, phase, gitBranch. v3.5.1: Lagt til checkpoints[].gitCommit + .checksums og metrics-felt. v3.5.0: Lagt til professionalPackage-felt for Kit CC profesjonell pakke v3.",
+  "type": "object",
+  "required": [
+    "projectName",
+    "currentPhase",
+    "classification",
+    "session",
+    "stateVersion",
+    "schemaVersion"
+  ],
+  "properties": {
+    "stateVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Inkrementeres ved hver skriving. Brukes for optimistic locking."
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 2,
+      "description": "Skjema-versjon. v1 = pre-locking, v2 = med stateVersion."
+    },
+    "projectName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "BRUKES: Prosjektets navn. Vises i Monitor splash page og håndtermeldinger. Påkrevd — tomt navn indikerer ufullstendig klassifisering."
+    },
+    "currentPhase": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Nåværende fase (1-7)"
+    },
+    "classification": {
+      "type": "object",
+      "required": [
+        "intensityLevel"
+      ],
+      "properties": {
+        "intensityLevel": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "forenklet",
+            "standard",
+            "grundig",
+            "enterprise"
+          ],
+          "description": "Prosjektets intensitetsnivå"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 7,
+          "maximum": 28,
+          "description": "Klassifiseringsscore (7-28)"
+        },
+        "confidenceScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Sikkerhet på klassifisering (0-100%)"
+        },
+        "userLevel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "utvikler",
+            "erfaren-vibecoder",
+            "ny-vibecoder",
+            null
+          ],
+          "default": null,
+          "description": "Brukerens tekniske nivå for kommunikasjonstilpasning. Null ved oppstart — settes av AUTO-CLASSIFIER under klassifisering. Kan endres av bruker med 'Bytt til [nivå]'. Se protocol-SYSTEM-COMMUNICATION.md for stilregler."
+        },
+        "downtimeTolerance": {
+          "type": "string",
+          "description": "Akseptabel nedetid"
+        },
+        "regulatoryRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Regulatoriske krav (GDPR, etc.)"
+        },
+        "integrationComplexity": {
+          "type": "string",
+          "description": "Integrasjonskompleksitet"
+        },
+        "confidenceBreakdown": {
+          "type": "object",
+          "properties": {
+            "clarity": {
+              "type": "number"
+            },
+            "consistency": {
+              "type": "number"
+            },
+            "pattern": {
+              "type": "number"
+            }
+          },
+          "description": "Tillits-score fordeling"
+        },
+        "classifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Klassifiseringstidspunkt"
+        },
+        "classifiedBy": {
+          "type": "string",
+          "description": "Hvem klassifiserte (AUTO-CLASSIFIER/bruker)"
+        },
+        "multiTenant": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "default": null,
+          "description": "True hvis prosjektet er multi-tenant (håndhever K1/K2/K3 automatisk på STANDARD+). Settes av AUTO-CLASSIFIER eller N1-protokollen ved deteksjon. Null = ukjent."
+        }
+      }
+    },
+    "builderMode": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "ai-bestemmer",
+        "samarbeid",
+        "detaljstyrt",
+        null
+      ],
+      "default": null,
+      "description": "Byggemodus for moduler/features i Fase 4-5. Null ved oppstart — AI spør bruker ved første sesjon (se CLAUDE.md boot steg 2/3). 'ai-bestemmer': AI tar alle tekniske valg. 'samarbeid': AI foreslår, bruker godkjenner. 'detaljstyrt': Bruker styrer, AI utfører. Kan endres per modul."
+    },
+    "imageStrategy": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "Bildehåndteringsstrategi valgt under klassifisering (B11). Null hvis bruker ikke trenger bilder. Brukes av 4-MVP-agent (Steg 1) og extension-REPLICATE-IMAGES.md. PHASE-GATES sjekker imagesGenerated ved Fase 4-gate.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "replicate",
+            "own-images",
+            "none"
+          ],
+          "description": "Valgt bildekilde. 'replicate': AI-generering via Replicate API. 'own-images': Bruker har egne bilder. 'none': Ingen bilder."
+        },
+        "replicateModel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Replicate modell-ID (kun hvis type=replicate). F.eks. 'black-forest-labs/flux-pro'."
+        },
+        "imagesGenerated": {
+          "type": "boolean",
+          "default": false,
+          "description": "Satt til true når bilder er generert/plassert i prosjektet. PHASE-GATES blokkerer Fase 4-gate hvis type!='none' og imagesGenerated===false."
+        }
+      }
+    },
+    "brownfield": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "Brownfield-analyse fra BROWNFIELD-SCANNER. Null for greenfield-prosjekter. Skrives av BROWNFIELD-SCANNER (Fase 4.4) via AUTO-CLASSIFIER. Leses av fase-agenter for kontekst om eksisterende kodebase.",
+      "properties": {
+        "detected": {
+          "type": "boolean",
+          "description": "True hvis eksisterende kode ble oppdaget"
+        },
+        "scannedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Tidspunkt for skanning (ISO 8601)"
+        },
+        "agentsRun": {
+          "type": "integer",
+          "description": "Antall analyse-agenter som ble kjørt (typisk 25)"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "HIGH",
+            "MEDIUM",
+            "LOW"
+          ],
+          "description": "Konfidensgrad for analysen"
+        },
+        "discoveryFile": {
+          "type": "string",
+          "description": "Sti til BROWNFIELD-DISCOVERY.md"
+        },
+        "techStack": {
+          "type": "object",
+          "description": "Oppdaget teknologistack",
+          "properties": {
+            "language": {
+              "type": "string",
+              "description": "Primært programmeringssprak"
+            },
+            "framework": {
+              "type": "string",
+              "description": "Primært rammeverk"
+            },
+            "database": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Database hvis oppdaget"
+            },
+            "deployment": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Deployment-mal hvis oppdaget"
+            }
+          }
+        },
+        "codeStats": {
+          "type": "object",
+          "description": "Kodebase-statistikk",
+          "properties": {
+            "totalFiles": {
+              "type": "integer",
+              "description": "Totalt antall filer"
+            },
+            "totalLines": {
+              "type": "integer",
+              "description": "Totalt antall kodelinjer"
+            },
+            "languages": {
+              "type": "object",
+              "description": "Linjer per sprak",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "testRatio": {
+              "type": "number",
+              "description": "Andel testfiler (0.0-1.0)"
+            }
+          }
+        },
+        "recommendedStartPhase": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7,
+          "description": "Anbefalt startfase basert pa analyse"
+        },
+        "userCorrections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Korreksjoner fra bruker etter skanning"
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "default": {
+        "detected": [],
+        "confirmed": [],
+        "setup": []
+      },
+      "description": "Integrasjonsbehov oppdaget av B12 i AUTO-CLASSIFIER, bekreftet av KRAV-agent, provider-mappet av ARKITEKTUR-agent, og satt opp av MVP-agent Steg 4.5. Leses av BYGGER-agent for provider-spesifikk implementasjon.",
+      "properties": {
+        "detected": {
+          "type": "array",
+          "description": "Integrasjoner automatisk detektert fra brukerens svar (B12). Flyttes til confirmed[] av KRAV-agent.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": [
+                  "auth",
+                  "images",
+                  "vcs",
+                  "database",
+                  "hosting",
+                  "storage",
+                  "maps",
+                  "devtools",
+                  "design",
+                  "payments",
+                  "email",
+                  "monitor",
+                  "monitoring",
+                  "analytics",
+                  "ai",
+                  "cms",
+                  "video"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "description": "Kort begrunnelse fra brukerens svar"
+              },
+              "tier": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 4
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "detected"
+                ]
+              }
+            }
+          }
+        },
+        "confirmed": {
+          "type": "array",
+          "description": "Integrasjoner bekreftet av bruker i KRAV-agent og provider-mappet av ARKITEKTUR-agent.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "provider": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Konkret leverandør valgt i ARKITEKTUR-agent"
+              },
+              "tier": {
+                "type": "integer"
+              },
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "mvp-critical",
+                  "phase-5",
+                  "can-wait"
+                ]
+              },
+              "userStories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Brukerhistorier som trenger denne integrasjonen"
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kort begrunnelse for leverandør-valg (settes av ARKITEKTUR-agent)"
+              }
+            }
+          }
+        },
+        "setup": {
+          "type": "array",
+          "description": "Integrasjoner som er behandlet i MVP-agent Steg 4.5 (active/deferred/skipped). Overlay-kode legger også til id/name/addedAt når brukeren legger til integrasjoner via Monitor.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Provider-ID fra integrasjonskatalogen (f.eks. 'stripe', 'supabase-auth')"
+              },
+              "name": {
+                "type": "string",
+                "description": "Menneskelesbart navn på provideren"
+              },
+              "category": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "deferred",
+                  "skipped"
+                ]
+              },
+              "provider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL/endepunkt hvis relevant"
+              },
+              "addedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Når integrasjonen ble lagt til i setup-listen"
+              },
+              "statusChangedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Når status sist ble endret (settes ved 'active' etter credential-lagring)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "devServer": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "BRUKES: Dev-server konfigurasjon. Settes av 4-MVP-agent ved første dev-server start (steg 4.6.0). Vises i 'Vis status' kommando. Sikrer at flere Kit CC-prosjekter kan kjøre samtidig uten port-konflikter.",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Porten dev-serveren kjører på"
+        },
+        "url": {
+          "type": "string",
+          "description": "Full URL til dev-serveren (f.eks. http://localhost:3000)"
+        },
+        "framework": {
+          "type": "string",
+          "enum": [
+            "next",
+            "vite",
+            "cra",
+            "express",
+            "remix",
+            "nuxt",
+            "svelte",
+            "static",
+            "annet"
+          ],
+          "description": "Rammeverket som brukes"
+        },
+        "startCommand": {
+          "type": "string",
+          "description": "Kommandoen som startet dev-serveren (f.eks. 'npx next dev --port 3002')"
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "completed"
+          ],
+          "description": "Session-status for krasj-deteksjon. Settes til 'active' ved sesjonstart, 'completed' ved normal avslutning. Hvis neste sesjon finner 'active' betyr det at forrige sesjon krasjet."
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Når session startet (ISO 8601)"
+        },
+        "sessionId": {
+          "type": "string",
+          "pattern": "^sess-[a-z0-9]+$",
+          "description": "Unik session-ID"
+        },
+        "lastSignificantAction": {
+          "type": "object",
+          "description": "Siste vesentlige handling som ble utført. Oppdateres progressivt etter hver vesentlig handling for crash-resiliens.",
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Når handlingen ble utført (ISO 8601)"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "TASK_COMPLETED",
+                "FILE_CREATED",
+                "FILE_MODIFIED",
+                "DECISION_MADE",
+                "ERROR_DETECTED",
+                "MILESTONE_REACHED",
+                "PHASE_TRANSITION"
+              ],
+              "description": "Type vesentlig handling"
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Kort beskrivelse av handlingen (maks 200 tegn)"
+            },
+            "agent": {
+              "type": "string",
+              "description": "Hvilken agent som utførte handlingen"
+            }
+          }
+        },
+        "crashRecovery": {
+          "type": "object",
+          "description": "Metadata for krasj-gjenoppretting. Fylles ut av ORCHESTRATOR hvis forrige sesjon krasjet.",
+          "properties": {
+            "previousSessionCrashed": {
+              "type": "boolean",
+              "description": "True hvis forrige sesjon ble avbrutt unormalt"
+            },
+            "recoveredAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Tidspunkt for gjenoppretting"
+            },
+            "lastKnownState": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Beskrivelse av siste kjente tilstand fra den krasjede sesjonen"
+            },
+            "dataLossEstimate": {
+              "type": "string",
+              "enum": [
+                "none",
+                "minimal",
+                "partial",
+                "significant"
+              ],
+              "description": "Estimert datatap fra krasjen"
+            }
+          }
+        }
+      }
+    },
+    "phaseProgress": {
+      "type": "object",
+      "description": "Fremdrift per fase",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "in_progress",
+              "completed"
+            ]
+          },
+          "completedSteps": {
+            "type": "array",
+            "description": "Liste over fullførte oppgaver",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "Enkel format (bakoverkompatibilitet) - kun oppgave-ID"
+                },
+                {
+                  "type": "object",
+                  "description": "Utvidet format (ANBEFALT) - med metadata",
+                  "required": [
+                    "id",
+                    "name",
+                    "requirement",
+                    "status"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "requirement": {
+                      "enum": [
+                        "MÅ",
+                        "BØR",
+                        "KAN"
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "completed",
+                        "partial"
+                      ]
+                    },
+                    "deliverable": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$",
+                      "description": "ISO 8601 timestamp with UTC timezone. Format: YYYY-MM-DDTHH:mm:ss.sssZ"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "skippedSteps": {
+            "type": "array",
+            "description": "Liste over bevisst skippede oppgaver",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "requirement",
+                "reason"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "requirement": {
+                  "enum": [
+                    "BØR",
+                    "KAN"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Begrunnelse for hvorfor oppgaven ble skipet"
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z$",
+                  "description": "ISO 8601 timestamp with UTC timezone. Format: YYYY-MM-DDTHH:mm:ss.sssZ"
+                }
+              }
+            }
+          },
+          "gateResults": {
+            "type": "object",
+            "description": "Resultater fra fase-gate validering"
+          }
+        }
+      }
+    },
+    "pendingTasks": {
+      "type": "array",
+      "description": "Prosjektbrede ventende oppgaver (på tvers av faser). Skiller seg fra phases[].completedSteps som er fase-spesifikke. Skrives av ORCHESTRATOR (Lag 3) og AGENT-PROTOCOL. Leses ved crash recovery (CLAUDE.md steg 1B).",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "blocking",
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "type": "string",
+            "description": "Hvor oppgaven kom fra (f.eks. 'monitor-backlog', 'ai', 'user'). Brukes av konsistenssjekk i kit-cc-overlay til å matche backlog-items mot pendingTasks."
+          }
+        }
+      }
+    },
+    "completedTasks": {
+      "type": "array",
+      "description": "Prosjektbrede fullførte oppgaver (på tvers av faser). Skiller seg fra phases[].completedSteps som er fase-spesifikke. Skrives av fase-agenter (CLAUDE.md). Leses ved crash recovery (CLAUDE.md steg 1B) og ved 'Vis status'-kommando.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "completedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "gateOverrides": {
+      "type": "array",
+      "description": "Logger for overstyrte gates",
+      "items": {
+        "type": "object",
+        "required": [
+          "phase",
+          "timestamp",
+          "missingItems"
+        ],
+        "properties": {
+          "phase": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "missingItems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "riskLevel": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "userUnderstood": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "reminderShownAtDeployment": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "history": {
+      "type": "object",
+      "description": "Unified history",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "timestamp",
+              "type",
+              "agent"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^evt-[a-z]+-[0-9]+$"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "CHECKPOINT",
+                  "GATE_RESULT",
+                  "CLASSIFICATION",
+                  "SESSION_START",
+                  "SESSION_END",
+                  "SESSION_CRASH_DETECTED",
+                  "SIGNIFICANT_ACTION",
+                  "ERROR",
+                  "USER_OVERRIDE",
+                  "REGRESSION",
+                  "RECLASSIFICATION"
+                ]
+              },
+              "phase": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 7
+              },
+              "agent": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$",
+                "description": "3-bokstavs agent-kode (ORC, CLA, GAT, CON, PRO)"
+              },
+              "data": {
+                "type": "object",
+                "description": "Event-spesifikke data"
+              }
+            }
+          }
+        }
+      }
+    },
+    "lastCheckpoint": {
+      "type": "object",
+      "description": "Siste progressive checkpoint (oppdateres ved hvert agent-bytte av ORCHESTRATOR)",
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Når checkpoint ble lagret"
+        },
+        "agent": {
+          "type": "string",
+          "description": "Hvilken agent som fullførte sist"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Kort oppsummering av hva som ble gjort (maks 200 tegn)"
+        }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "default": [],
+      "description": "Lagringspunkter for rollback. Hvert element har type, timestamp, phaseId og stateSnapshot. Opprettes av ORCHESTRATOR ved faseoverganger. Arkiveres til .ai/CHECKPOINT-HISTORY/ ved pruning (se ROLLBACK-PROTOCOL.md).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unik checkpoint-ID (cp-<timestamp>-<random> eller safety-<timestamp>)"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "phase-complete",
+              "milestone",
+              "manual",
+              "safety-backup"
+            ],
+            "description": "Type lagringspunkt. 'safety-backup' = automatisk sikkerhetskopi før risikabel operasjon (f.eks. restore)."
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO 8601 tidsstempel"
+          },
+          "phaseId": {
+            "type": "integer",
+            "description": "Fase-nummer ved checkpoint"
+          },
+          "phase": {
+            "type": "integer",
+            "description": "Alias for phaseId (bakoverkompatibilitet — overlay-kode skriver 'phase')"
+          },
+          "description": {
+            "type": "string",
+            "description": "Beskrivelse av lagringspunktet"
+          },
+          "stateSnapshot": {
+            "type": "object",
+            "description": "Kopi av PROJECT-STATE på tidspunktet"
+          },
+          "gitCommit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Git commit-hash på tidspunktet for checkpoint (hvis prosjektet er i et git-repo). Brukes av ROLLBACK-PROTOCOL for å rulle tilbake til en fungerende tilstand."
+          },
+          "gitBranch": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Git branch-navn ved checkpoint-tidspunktet."
+          },
+          "checksums": {
+            "type": "object",
+            "description": "SHA-256 checksums for sentrale filer (PROJECT-STATE.json, MISSION-BRIEFING) for å detektere tukling eller korruption ved restore.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "lastRestore": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "Metadata om siste gjenoppretting når stateSnapshot mangler. Skrives av /checkpoints/restore-endepunktet i kit-cc-overlay. Leses av AI-agenten for å gi kontekst etter manuell rollback.",
+      "properties": {
+        "checkpointId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "integer"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "restoredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "default": {},
+      "description": "Metrics og KPIer for prosjektet. Skrives av Kit CC Monitor (kit-cc-overlay telemetry) og leses av METRICS-KPI.md for dashbord. Se METRICS-KPI.md for komplett felt-liste.",
+      "properties": {
+        "agentCalls": {
+          "type": "integer",
+          "default": 0,
+          "description": "Total antall agent-kall i denne sesjonen"
+        },
+        "gateAttempts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Antall gate-forsøk pr fase"
+        },
+        "tokenUsage": {
+          "type": "object",
+          "properties": {
+            "input": {
+              "type": "integer"
+            },
+            "output": {
+              "type": "integer"
+            },
+            "cached": {
+              "type": "integer"
+            }
+          },
+          "description": "Token-forbruk aggregert pr provider"
+        }
+      }
+    },
+    "pendingDecisions": {
+      "type": "array",
+      "description": "Uløste BØR/KAN-valg som venter på bruker",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "description",
+          "phase"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BØR",
+              "KAN"
+            ],
+            "description": "Kravtype"
+          },
+          "description": {
+            "type": "string",
+            "description": "Menneskelesbar beskrivelse av valget"
+          },
+          "phase": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7,
+            "description": "Hvilken fase dette valget tilhører"
+          }
+        }
+      }
+    },
+    "designSystem": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "Designsystem opprettet via Gorgeous UI-agenten (F34). Null hvis bruker ikke har valgt design ennå. Leses av BYGGER-agent (hard gate i Stage 1), PHASE-GATES (Fase 4-gate), MVP-agent (Steg 3B), og ITERASJONS-agent (ITR-10). Primær verifisering: globals.css med CSS variables, @theme inline og @custom-variant dark (Tailwind v4 CSS-first).",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Gorgeous UI agent versjon"
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Når designsystemet ble generert"
+        },
+        "selections": {
+          "type": "object",
+          "description": "Brukerens valg per dimensjon (12 dimensjoner). Nøkkel = dimensjon-ID, verdi = { id, name }.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "googleFontsUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL til Google Fonts CSS for valgt font-kombinasjon. Null hvis system fonts."
+        }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "description": "Tilstand for Kit CC Monitor (visuelt dashboard/dev-verktøy). Settes av 4-MVP-agent ved oppstart, leses av DEBUGGER og fase-agenter.",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "default": 4444,
+          "description": "Porten Monitor-serveren lytter på"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "standalone",
+            "proxy"
+          ],
+          "default": "standalone",
+          "description": "standalone = frittstående dashboard, proxy = injisert i brukerens webapp"
+        },
+        "devServerPort": {
+          "type": "integer",
+          "description": "Brukerens dev-server port (kun relevant i proxy-modus)"
+        }
+      }
+    },
+    "reclassifications": {
+      "type": "array",
+      "description": "Logger for reklassifiserte MÅ-oppgaver (MÅ → BØR). Kun bruker kan initiere.",
+      "items": {
+        "type": "object",
+        "required": [
+          "taskId",
+          "taskName",
+          "originalRequirement",
+          "newRequirement",
+          "reason",
+          "reclassifiedBy",
+          "timestamp",
+          "phase"
+        ],
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "description": "Oppgave-ID som ble reklassifisert"
+          },
+          "taskName": {
+            "type": "string",
+            "description": "Menneskelesbart navn på oppgaven"
+          },
+          "originalRequirement": {
+            "type": "string",
+            "enum": [
+              "MÅ"
+            ],
+            "description": "Opprinnelig kravnivå (alltid MÅ)"
+          },
+          "newRequirement": {
+            "type": "string",
+            "enum": [
+              "BØR"
+            ],
+            "description": "Nytt kravnivå (alltid BØR)"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Brukerens begrunnelse for reklassifisering (minimum 10 tegn)"
+          },
+          "reclassifiedBy": {
+            "type": "string",
+            "enum": [
+              "user"
+            ],
+            "description": "Hvem som initierte reklassifiseringen (alltid 'user' — AI kan aldri reklassifisere)"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Når reklassifiseringen skjedde (ISO 8601)"
+          },
+          "phase": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 7,
+            "description": "Hvilken fase oppgaven tilhører"
+          }
+        }
+      }
+    },
+    "deferredTasks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Utsatte oppgaver",
+      "default": []
+    },
+    "dataTypes": {
+      "type": "object",
+      "description": "Datatype-klassifisering for prosjektet. Skrives av AUTO-CLASSIFIER og ARKITEKTUR-agent ved deteksjon av sensitive data. Leses av GDPR-ekspert (compliance-validering) og OWASP-ekspert (kryptografisk beskyttelse).",
+      "properties": {
+        "sensitive": {
+          "type": "array",
+          "default": [],
+          "description": "Sensitive datatyper som er identifisert i prosjektet",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "description": "Datakategori (f.eks. payment, health, biometric)"
+              },
+              "detected": {
+                "type": "string",
+                "description": "Dato for deteksjon (ISO 8601)"
+              },
+              "detectedInPhase": {
+                "type": "string",
+                "description": "Hvilken fase datatypen ble detektert i"
+              }
+            }
+          }
+        }
+      }
+    },
+    "professionalPackage": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "default": null,
+      "description": "Profesjonell pakke v3 status. Aktiveres automatisk ved intensitet STANDARD+. Null hvis pakken ikke er aktivert.",
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "2.0"
+          ],
+          "description": "Schema-versjon for profesjonell pakke (alltid 2.0)"
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "True når profesjonell pakke er aktivert for dette prosjektet"
+        },
+        "activatedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "default": null,
+          "description": "Tidspunkt for aktivering (ISO 8601). Null hvis ikke aktivert."
+        },
+        "intensityAtActivation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "standard",
+            "grundig",
+            "enterprise",
+            null
+          ],
+          "default": null,
+          "description": "Intensitetsnivå som trigget aktivering"
+        },
+        "components": {
+          "type": "array",
+          "default": [],
+          "description": "Aktiverte pakke-komponenter med status",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Komponent-ID (f.eks. K1, S7)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Komponent-navn"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "skipped",
+                  "deferred"
+                ],
+                "description": "Status for komponenten"
+              },
+              "activatedAt": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "refinementCounter": {
+          "type": "integer",
+          "default": 0,
+          "description": "Teller for refinement-runder (S4: REFINEMENT-CAP). Blokkeres ved > 5."
+        },
+        "lastDriftCheck": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "default": null,
+          "description": "Siste drift-sjekk tidspunkt (S5: DRIFT-DETECTOR)"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "System-metadata for Kit CC. Skrives av AUTO-CLASSIFIER ved bootstrap. Leses av CLAUDE.md boot-sekvens for versjonskontroll.",
+      "properties": {
+        "agentSystemVersion": {
+          "type": "string",
+          "description": "Kit CC-versjon brukt ved opprettelse/siste oppdatering. Sammenlignes med CLAUDE.md-versjon ved oppstart for å varsle om versjonsforskjeller."
+        }
+      }
+    }
+  }
+}

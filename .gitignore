@@ -1,0 +1,43 @@
+# Mac systemfiler
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor temp-filer
+*.swp
+*~
+.idea/
+.vscode/
+
+# Sensitive (forsiktighet — skal ikke finnes her, men ekskluder forebyggende)
+.env
+.env.local
+*.key
+*.pem
+secrets/
+credentials.json
+
+# OS / sync
+Thumbs.db
+ehthumbs.db
+.Spotlight-V100
+.Trashes
+
+# Backup-arbeidsfiler (skal ikke committes)
+*.bak
+*.tmp
+*.orig
+
+# Runtime / lokale filer (lagt til ved publisering)
+node_modules/
+kit-cc-overlay/.auth-token
+kit-cc-overlay/.master-key
+kit-cc-overlay/monitor.pid
+kit-cc-overlay/monitor.log
+.ai/PROGRESS-LOG.jsonl
+.ai/PROJECT-STATE.json
+.ai/SESSION-HANDOFF.md
+.ai/MONITOR-*.json
+**/*.db
+
+.claude/

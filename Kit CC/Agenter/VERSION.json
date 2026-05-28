@@ -1,0 +1,48 @@
+{
+  "kit_cc_version": "3.6.0",
+  "release_date": "2026-05-13",
+  "agent_count": 57,
+  "patterns_count": 22,
+  "modes_count": 4,
+  "phases_count": 7,
+  "scripts_count": 7,
+  "changelog": "Native planleggings-funksjon: 22 mønstre, 4 moduser (PLAN/BRAINSTORM/STATUS/REVIEW), intent-deteksjon, state-hardning (JSONL + optimistic locking), VALIDERING karakter A-D. Backwards-kompatibel med v3.5.0.",
+  "release_notes": "Kit CC/docs/RELEASE-v3.6.0.md",
+  "migration_guide": "Kit CC/docs/MIGRASJON-v3.5-til-v3.6.md",
+  "previous_versions": ["3.5.0", "3.5.1"],
+  "systemVersion": "3.6.0",
+  "systemReleasedAt": "2026-05-13",
+  "lastUpdated": "2026-05-13",
+  "description": "Sentral versjonsfil for Kit CC agent-systemet. Alle andre filer henter systemversjonen herfra.",
+  "totalAgenter": 57,
+  "fordeling": {
+    "system": 6,
+    "basis": 7,
+    "prosess": 7,
+    "ekspert": 37
+  },
+  "antallFaser": 7,
+  "antallNivaaer": 4,
+  "komponenter": {
+    "protokoller": 33,
+    "extensions": 8,
+    "docs": 5,
+    "maler": 10,
+    "klassifiseringFiler": 11,
+    "monstre": 22,
+    "scripts": 7
+  },
+  "compatibility": {
+    "claudeCodeMinVersion": "1.0.0",
+    "anthropicSDK": "0.30+",
+    "schemaVersion": "3.6.0"
+  },
+  "endringslogg": [
+    { "versjon": "3.6.0", "dato": "2026-05-13", "endring": "Native planleggings-funksjon: 22 mønstre, 4 moduser (PLAN/BRAINSTORM/STATUS/REVIEW), intent-deteksjon, state-hardning (JSONL + optimistic locking), VALIDERING karakter A-D. Backwards-kompatibel med v3.5.0." },
+    { "versjon": "3.5.0", "dato": "2026-02-23", "endring": "3-lags kontekstarkitektur, MONITOR-filer i Lag 1, ORCHESTRATOR/AUTO-CLASSIFIER kun ved nytt prosjekt/fase-overgang" },
+    { "versjon": "3.4.1", "dato": "2026-02-23", "endring": "Fase 1-3 oppgave-IDer migrert til agent-spesifikke prefikser" },
+    { "versjon": "3.4.0", "dato": "2026-02-10", "endring": "Versjonsynkronisering, bekreftet 57 agenter totalt, MÅ/BØR/KAN-matrise fullstendig" }
+  ],
+  "lesRegel": "Alle filer i Kit CC skal henvise hit for systemversjon. Filens egen innholdsversjon (f.eks. 'v2.3.0') beskriver hvor moden dokumentet er, IKKE systemets versjon.",
+  "ssot": "Denne filen er SSOT for systemversjonen av Kit CC."
+}
