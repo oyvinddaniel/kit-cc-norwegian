@@ -14,18 +14,16 @@ Kit CC er et komplett multi-agent system for å bygge programvare fra idé til f
 
 **Forutsetning:** [Claude Code](https://docs.claude.com/claude-code) må være installert (CLI-kommandoen heter `claude`). Monitor-dashboardet trenger Node.js 18+.
 
-Kjør installeren — den henter Kit CC og legger alt på plass (også skjulte filer). Last ned scriptet og kjør det (virker i alle skall):
+Kjør installeren med **én kommando** — den henter Kit CC og legger alt på plass (også skjulte filer):
 
 **Ny app** (oppretter mappa):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh -o kitcc-install.sh
-bash kitcc-install.sh min-nye-app
+curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh | bash -s -- min-nye-app
 ```
 
 **App fra før** (stå i prosjektmappa di — Kit CC legges inn ved siden av koden din):
 ```bash
-curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh -o kitcc-install.sh
-bash kitcc-install.sh
+curl -fsSL https://raw.githubusercontent.com/oyvinddaniel/kit-cc-norwegian/main/install.sh | bash
 ```
 
 > ⚠️ **Ta backup FØR du bygger** når du har en app fra før. Kit CC endrer filer i appen din — commit til git (`git init && git add -A && git commit -m "før Kit CC"`) eller kopier mappa, så du kan gå tilbake hvis noe breaker.
